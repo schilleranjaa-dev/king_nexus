@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "288626336136",
+    "project_id": "king-nexus",
+    "storage_bucket": "king-nexus.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288626336136:android:6b0680efab3c7cf3d55a3d",
+        "android_client_info": {
+          "package_name": "com.example.king_nexus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM4EIo9Le-jAuRRckt1fgMn2XqV9b9NPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288626336136:android:15805951f66e8bd0d55a3d",
+        "android_client_info": {
+          "package_name": "com.kingnexus.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM4EIo9Le-jAuRRckt1fgMn2XqV9b9NPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
