@@ -172,6 +172,7 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
       userId: userId!,
       playerName: currentUser!.playerName,
       alliance: currentUser!.alliance,
+      role: currentUser!.role,
       selection: selection,
       updatedAt: DateTime.now(),
     );
@@ -373,7 +374,7 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
                     ),
                   ),
                   subtitle: Text(
-                    registration.alliance,
+                    '${registration.alliance} • ${registration.role == 'Member' ? 'Mitglied' : registration.role}',
                   ),
                   trailing: const Text(
                     '✅',
@@ -417,7 +418,7 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
                   registration.playerName,
                 ),
                 subtitle: Text(
-                  registration.alliance,
+                  '${registration.alliance} • ${registration.role == 'Member' ? 'Mitglied' : registration.role}',
                 ),
               ),
             ),
@@ -451,9 +452,7 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
                     color: Colors.amber,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 const Center(
                   child: Text(
                     'BÄRENFALLE 1',
@@ -464,9 +463,7 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Center(
                   child: Text(
                     '$startTime UTC',
@@ -476,16 +473,13 @@ class _BearTrap1PageState extends State<BearTrap1Page> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
                 if (canEditEventTime)
                   Center(
                     child: OutlinedButton.icon(
                       onPressed: changeStartTime,
-                      icon: const Icon(
-                        Icons.schedule,
-                      ),
+                      icon: const Icon(Icons.schedule),
                       label: const Text(
                         'Startzeit ändern',
                       ),

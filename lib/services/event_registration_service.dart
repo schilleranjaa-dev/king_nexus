@@ -14,24 +14,30 @@ class EventRegistrationService {
         .collection('registrations');
   }
 
-  /// Anmeldung speichern oder aktualisieren
   Future<void> saveRegistration(
     EventRegistrationModel registration,
   ) async {
-    await _registrationsRef(registration.eventId)
-        .doc(registration.userId)
-        .set(
-          registration.toMap(),
-          SetOptions(merge: true),
-        );
+    await _registrationsRef(
+      registration.eventId,
+    ).doc(
+      registration.userId,
+    ).set(
+      registration.toMap(),
+      SetOptions(
+        merge: true,
+      ),
+    );
   }
 
-  /// Eigene Anmeldung laden
   Future<EventRegistrationModel?> getRegistration({
     required String eventId,
     required String userId,
   }) async {
-    final doc = await _registrationsRef(eventId).doc(userId).get();
+    final doc = await _registrationsRef(
+      eventId,
+    ).doc(
+      userId,
+    ).get();
 
     if (!doc.exists || doc.data() == null) {
       return null;
@@ -43,54 +49,111 @@ class EventRegistrationService {
     );
   }
 
-  /// Alle Anmeldungen eines Events live laden
   Stream<List<EventRegistrationModel>> watchRegistrations(
     String eventId,
   ) {
-    return _registrationsRef(eventId)
-        .orderBy('playerName')
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map(
-                (doc) => EventRegistrationModel.fromMap(
-                  doc.id,
-                  doc.data(),
-                ),
-              )
-              .toList(),
+    return _registrationsRef(
+      eventId,
+    ).snapshots().map(
+      (snapshot) {
+        final registrations = snapshot.docs.map(
+          (doc) {
+            return EventRegistrationModel.fromMap(
+              doc.id,
+              doc.data(),
+            );
+          },
+        ).toList();
+
+        registrations.sort(
+          (a, b) => a.playerName
+              .toLowerCase()
+              .compareTo(
+                b.playerName.toLowerCase(),
+              ),
         );
+
+        return registrations;
+      },
+    );
   }
 
-  /// Eigene Anmeldung löschen
-  Future<void> deleteRegistration({
-    required String eventId,
-    required String userId,
-  }) async {
-    await _registrationsRef(eventId).doc(userId).delete();
-  }
-
-  /// Nur Teilnehmer einer bestimmten Auswahl live laden
   Stream<List<EventRegistrationModel>> watchBySelection({
     required String eventId,
     required String selection,
   }) {
-    return _registrationsRef(eventId)
+    return _registrationsRef(
+      eventId,
+    )
         .where(
           'selection',
           isEqualTo: selection,
         )
-        .orderBy('playerName')
         .snapshots()
         .map(
-          (snapshot) => snapshot.docs
-              .map(
-                (doc) => EventRegistrationModel.fromMap(
+          (snapshot) {
+            final registrations = snapshot.docs.map(
+              (doc) {
+                return EventRegistrationModel.fromMap(
                   doc.id,
                   doc.data(),
-                ),
-              )
-              .toList(),
+                );
+              },
+            ).toList();
+
+            registrations.sort(
+              (a, b) => a.playerName
+                  .toLowerCase()
+                  .compareTo(
+                    b.playerName.toLowerCase(),
+                  ),
+            );
+
+            return registrations;
+          },
         );
+  }
+
+  Future<void> changeSelection({
+    required String eventId,
+    required String userId,
+    required String selection,
+  }) async {
+    await _registrationsRef(
+      eventId,
+    ).doc(
+      userId,
+    ).update({
+      'selection': selection,
+      'updatedAt':
+          DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<void> deleteRegistration({
+    required String eventId,
+    required String userId,
+  }) async {
+    await _registrationsRef(
+      eventId,
+    ).doc(
+      userId,
+    ).delete();
+  }
+
+  Future<int> countBySelection({
+    required String eventId,
+    required String selection,
+  }) async {
+    final snapshot = await _registrationsRef(
+      eventId,
+    )
+        .where(
+          'selection',
+          isEqualTo: selection,
+        )
+        .get();
+
+    return snapshot.docs.length;
   }
 }

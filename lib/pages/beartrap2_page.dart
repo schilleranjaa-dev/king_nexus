@@ -172,6 +172,7 @@ class _BearTrap2PageState extends State<BearTrap2Page> {
       userId: userId!,
       playerName: currentUser!.playerName,
       alliance: currentUser!.alliance,
+      role: currentUser!.role,
       selection: selection,
       updatedAt: DateTime.now(),
     );
@@ -298,8 +299,7 @@ class _BearTrap2PageState extends State<BearTrap2Page> {
 
   Widget participantList() {
     return StreamBuilder<List<EventRegistrationModel>>(
-      stream:
-          _registrationService.watchRegistrations(
+      stream: _registrationService.watchRegistrations(
         eventId,
       ),
       builder: (context, snapshot) {
@@ -374,7 +374,7 @@ class _BearTrap2PageState extends State<BearTrap2Page> {
                     ),
                   ),
                   subtitle: Text(
-                    registration.alliance,
+                    '${registration.alliance} • ${registration.role == 'Member' ? 'Mitglied' : registration.role}',
                   ),
                   trailing: const Text(
                     '✅',
@@ -418,7 +418,7 @@ class _BearTrap2PageState extends State<BearTrap2Page> {
                   registration.playerName,
                 ),
                 subtitle: Text(
-                  registration.alliance,
+                  '${registration.alliance} • ${registration.role == 'Member' ? 'Mitglied' : registration.role}',
                 ),
               ),
             ),
