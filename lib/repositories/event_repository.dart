@@ -6,47 +6,49 @@ class EventRepository {
 
   EventRepository({
     EventService? eventService,
-  }) : _eventService = eventService ?? EventService();
+  }) : _eventService =
+            eventService ?? EventService();
 
-  /// Alle Events live laden
   Stream<List<EventModel>> watchEvents() {
     return _eventService.watchEvents();
   }
 
-  /// Nur aktive Events live laden
   Stream<List<EventModel>> watchActiveEvents() {
     return _eventService.watchActiveEvents();
   }
 
-  /// Einzelnes Event einmal laden
   Future<EventModel?> getEvent(
     String eventId,
   ) {
-    return _eventService.getEvent(eventId);
+    return _eventService.getEvent(
+      eventId,
+    );
   }
 
-  /// Einzelnes Event live beobachten
   Stream<EventModel?> watchEvent(
     String eventId,
   ) {
-    return _eventService.watchEvent(eventId);
+    return _eventService.watchEvent(
+      eventId,
+    );
   }
 
-  /// Event speichern
   Future<void> saveEvent(
     EventModel event,
   ) {
-    return _eventService.saveEvent(event);
+    return _eventService.saveEvent(
+      event,
+    );
   }
 
-  /// Event löschen
   Future<void> deleteEvent(
     String eventId,
   ) {
-    return _eventService.deleteEvent(eventId);
+    return _eventService.deleteEvent(
+      eventId,
+    );
   }
 
-  /// Event aktivieren/deaktivieren
   Future<void> setEventActive({
     required String eventId,
     required bool active,
@@ -57,7 +59,6 @@ class EventRepository {
     );
   }
 
-  /// Anmeldung öffnen/schließen
   Future<void> setRegistrationOpen({
     required String eventId,
     required bool open,
@@ -68,7 +69,6 @@ class EventRepository {
     );
   }
 
-  /// Startzeit ändern
   Future<void> setStartTime({
     required String eventId,
     required String startTime,
@@ -79,7 +79,6 @@ class EventRepository {
     );
   }
 
-  /// Events eines bestimmten Typs laden
   Stream<List<EventModel>> watchEventsByType(
     String eventType,
   ) {

@@ -1,11 +1,17 @@
-import 'event_group_model.dart';
-
 class EventModel {
   final String id;
   final String title;
   final String description;
+
+  /// Bleibt vorerst für ältere Bereiche der App erhalten.
   final String startTime;
+
+  /// Optionaler allgemeiner Termin für Events,
+  /// die nur einen einzigen Termin besitzen.
+  final DateTime? eventDateTime;
+
   final String eventType;
+
   final bool isActive;
   final bool registrationOpen;
 
@@ -14,13 +20,12 @@ class EventModel {
   final bool hasGuide;
   final bool hasCountdown;
 
-  final List<EventGroupModel> groups;
-
   const EventModel({
     required this.id,
     required this.title,
     required this.description,
     required this.startTime,
+    this.eventDateTime,
     required this.eventType,
     required this.isActive,
     required this.registrationOpen,
@@ -28,33 +33,11 @@ class EventModel {
     required this.hasTeams,
     required this.hasGuide,
     required this.hasCountdown,
-    required this.groups,
   });
 
   factory EventModel.fromMap(
     Map<String, dynamic> map,
   ) {
-    final rawGroups = map['groups'];
-
-    List<EventGroupModel> parsedGroups = [];
-
-    if (rawGroups is List) {
-      parsedGroups = rawGroups
-          .whereType<Map>()
-          .map(
-            (group) => EventGroupModel.fromMap(
-              Map<String, dynamic>.from(group),
-            ),
-          )
-          .toList();
-
-      parsedGroups.sort(
-        (a, b) => a.sortOrder.compareTo(
-          b.sortOrder,
-        ),
-      );
-    }
-
     return EventModel(
       id: map['id']?.toString() ?? '',
       title: map['title']?.toString() ?? '',
@@ -62,6 +45,9 @@ class EventModel {
           map['description']?.toString() ?? '',
       startTime:
           map['startTime']?.toString() ?? '',
+      eventDateTime: _parseDateTime(
+        map['eventDateTime'],
+      ),
       eventType:
           map['eventType']?.toString() ?? '',
       isActive: _parseBool(
@@ -70,6 +56,7 @@ class EventModel {
       ),
       registrationOpen: _parseBool(
         map['registrationOpen'],
+        fallback: true,
       ),
       hasGroups: _parseBool(
         map['hasGroups'],
@@ -85,8 +72,25 @@ class EventModel {
         map['hasCountdown'],
         fallback: true,
       ),
-      groups: parsedGroups,
     );
+  }
+
+  static DateTime? _parseDateTime(
+    dynamic value,
+  ) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is DateTime) {
+      return value.toUtc();
+    }
+
+    final parsed = DateTime.tryParse(
+      value.toString(),
+    );
+
+    return parsed?.toUtc();
   }
 
   static bool _parseBool(
@@ -99,6 +103,10 @@ class EventModel {
 
     if (value is bool) {
       return value;
+    }
+
+    if (value is num) {
+      return value != 0;
     }
 
     if (value is String) {
@@ -114,10 +122,6 @@ class EventModel {
       }
     }
 
-    if (value is num) {
-      return value != 0;
-    }
-
     return fallback;
   }
 
@@ -127,6 +131,10 @@ class EventModel {
       'title': title,
       'description': description,
       'startTime': startTime,
+      'eventDateTime':
+          eventDateTime
+              ?.toUtc()
+              .toIso8601String(),
       'eventType': eventType,
       'isActive': isActive,
       'registrationOpen':
@@ -135,11 +143,6 @@ class EventModel {
       'hasTeams': hasTeams,
       'hasGuide': hasGuide,
       'hasCountdown': hasCountdown,
-      'groups': groups
-          .map(
-            (group) => group.toMap(),
-          )
-          .toList(),
     };
   }
 
@@ -148,6 +151,7 @@ class EventModel {
     String? title,
     String? description,
     String? startTime,
+    DateTime? eventDateTime,
     String? eventType,
     bool? isActive,
     bool? registrationOpen,
@@ -155,7 +159,6 @@ class EventModel {
     bool? hasTeams,
     bool? hasGuide,
     bool? hasCountdown,
-    List<EventGroupModel>? groups,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -164,6 +167,9 @@ class EventModel {
           description ?? this.description,
       startTime:
           startTime ?? this.startTime,
+      eventDateTime:
+          eventDateTime ??
+              this.eventDateTime,
       eventType:
           eventType ?? this.eventType,
       isActive:
@@ -180,7 +186,6 @@ class EventModel {
       hasCountdown:
           hasCountdown ??
               this.hasCountdown,
-      groups: groups ?? this.groups,
     );
   }
 }
